@@ -1,12 +1,14 @@
 #ifndef __AMUNGO__DW1000__STM32__H
 #define __AMUNGO__DW1000__STM32__H
 
+/*
+ * Functions, structures, constants specific for Stm32 board are declared here.
+ */
+
 #include <stm32f4xx.h>
 
 #include <stddef.h>
 #include <stdint.h>
-
-#define PROJECT_NAME "dw1000"
 
 #define STM32_HSE_FREQ 8000000
 #define STM32_SUCCESS 0

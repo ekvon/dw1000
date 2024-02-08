@@ -7,13 +7,11 @@ int stm32_rcc_init(){
 	RCC->AHB1ENR|=RCC_AHB1ENR_GPIOBEN;
 	RCC->APB2ENR|=RCC_APB2ENR_SPI1EN;
 	/*	MCO_1 is not used	*/
-	RCC->CFGR&=~(0x1<<26);
 	/*	enable external oscillator	*/
 	/*
 	RCC->CR|=(1<<16);
 	while(!(RCC->CR&(1<<17))){
-	}
-	*/
+	}*/
 	/*	disable APB2 prescaler (clearing highest bits)	*/
 	RCC->CFGR&=~0x00008000;
 	return STM32_SUCCESS;

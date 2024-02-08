@@ -27,6 +27,8 @@ void main(void)
 	stm32_usart_br_param_t usart_br;
 
 	stm32_rcc_init();
+	/*	get current value of SYSCLK (so HSE is used as invalid value may be returned)	*/
+	SystemCoreClockUpdate();
 	/*
 	* PLLCLK settings.
 	* HSE is not used as source clock and so SystemCoreClockUpdate() MUST return the true value.
@@ -41,7 +43,7 @@ void main(void)
 		return;
 	/*	switch to PLLCLK	*/
 	stm32_pll.sw=1;
-	stm32_rcc_pll(&stm32_pll);
+	/*	stm32_rcc_pll(&stm32_pll);	*/
 	/*	get current value of SYSCLK (invalid value is returned)	*/
 	SystemCoreClockUpdate();
 		
@@ -60,16 +62,17 @@ void main(void)
 	/*	
 	* SPI initialization.
 	* Software slave management is enable.
-	* AD9102 will be de-selected between transmissions.
 	* SPI1_NSS pin will be moved manually.
 	*/
-	/*
+
 	if(stm32_spi_init(1)<0){
-		sprintf(buf,"SPI configuration error\n");
-		stm32_usart_tx(buf,0);
+		sprintf(usart_tx_buf,"SPI configuration error\n");
+		stm32_usart_tx(usart_tx_buf,0);
 		return;
 	}
-	*/
+	sprintf(usart_tx_buf,"SPI is configured successfully\n");
+	stm32_usart_tx(usart_tx_buf,0);
+
 	/*	turn on leds	*/
 	GPIOB->BSRR&=~GPIO_BSRR_BR8;
 	GPIOB->BSRR|=GPIO_BSRR_BS8;
