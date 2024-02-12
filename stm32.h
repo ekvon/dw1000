@@ -70,13 +70,13 @@ int stm32_usart_tx(int8_t * data,size_t len);
 int stm32_usart_rx(int8_t * data,size_t len);
 
 /*	stm32 SPI module interface	*/
-/*	int stm32_spi_init(uint8_t ssm_enable);	*/
+int stm32_spi_init(uint8_t ssm_enable);
 /*	transmit only procedure for BIDIMODE=0 RXONLY=0 (rm0383 p.573)	*/
-/*	int stm32_spi_send(int8_t * data,uint16_t size,uint8_t mode);	*/
+int stm32_spi_send(int8_t * data,uint16_t size,uint8_t mode);
 /*	receive only procedure for BIDIMODE=0 RXONLY=1 (rm0383 p.575)	*/
-/*	int stm32_spi_recv(int8_t * data,uint16_t size,uint8_t mode);	*/
+int stm32_spi_recv(int8_t * data,uint16_t size,uint8_t mode);
 /*	full-duplex transmit procedure for BIDIMODE=0 RXONLY=0 (rm0383 p.572)	*/
-/*	int stm32_spi_transaction(int8_t * tx_buf,int8_t * rx_buf,uint16_t size,uint8_t mode);	*/
+int stm32_spi_tr(int8_t * tx_buf,int8_t * rx_buf,uint16_t size,uint8_t mode);
 /*	chip select management in SSM enable mode	*/
 /*	void stm32_spi_cs_high();	*/
 /*	void stm32_spi_cs_low();	*/
