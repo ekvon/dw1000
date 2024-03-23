@@ -45,7 +45,7 @@ void main(void)
 	/*	buffer for read/write operations	*/
 	uint32_t value32;
 	/*	number of transmitted frames	*/
-	int tx_number=0x10;
+	int tx_number=0x100;
 	
 	/*	PLLCLK settings	*/
 	stm32_pll_t stm32_pll;
@@ -262,9 +262,44 @@ void main(void)
 	
 	/*
 	 * Analog RF Configuration Block (0x28)
-	 * 
+	 * The only subregister which will be programmed is 0x28:0c (RF_TXCTRL).
+	 * It's value (specified for 4-th channel) is 0x00045c80.
+	 * 2-octet header SPI transcation is used.
 	 */
+	clear_spi_buffers();
+	spi_tx_buf[0]=0xc0|0x28;
+	spi_tx_buf[1]=0x0c;
+	spi_tx_buf[2]=0x80;
+	spi_tx_buf[3]=0x5c;
+	spi_tx_buf[4]=0x04;
+	spi_tx_buf[5]=0x00;
+	spi_tr_size=0x8;
+	stm32_spi_tr(spi_tx_buf,spi_rx_buf,spi_tr_size,0);
 	
+	/*
+	* Frequency Synthesiser Control Block (0x2b)
+	* Sub-Register 0x2b:07-FS_PLLCFG: 0x08400508 (specified for 4-th channel)
+	* Sub-Register 0x2b:0b-FS_PLLTUNE: 0x26 (specified for 4-th channel)
+	* 2-octet header SPI transcation is used.
+	*/
+	clear_spi_buffers();
+	spi_tx_buf[0]=0xc0|0x2b;
+	spi_tx_buf[1]=0x07;
+	spi_tx_buf[2]=0x08;
+	spi_tx_buf[3]=0x05;
+	spi_tx_buf[4]=0x40;
+	spi_tx_buf[5]=0x08;
+	spi_tr_size=0x8;
+	stm32_spi_tr(spi_tx_buf,spi_rx_buf,spi_tr_size,0);
+	
+	spi_tx_buf[0]=0xc0|0x2b;
+	spi_tx_buf[1]=0x0b;
+	spi_tx_buf[2]=0x26;
+	spi_tx_buf[3]=0x00;
+	spi_tx_buf[4]=0x00;
+	spi_tx_buf[5]=0x00;
+	spi_tr_size=0x8;
+	stm32_spi_tr(spi_tx_buf,spi_rx_buf,spi_tr_size,0);
 	
 	/*	send tx_number frames	*/
 	clear_spi_buffers();
@@ -274,17 +309,18 @@ void main(void)
 		spi_tx_buf[0]=0x8d;
 		spi_tx_buf[1]=0x02;
 		spi_tr_size=DW1000_SPI_TR_SIZE;
-		/*	stm32_spi_tr(spi_tx_buf,spi_rx_buf,spi_tr_size,0);	*/
+		stm32_spi_tr(spi_tx_buf,spi_rx_buf,spi_tr_size,0);
 		
 		clear_spi_buffers();
 		value32=0;
 		/*	don't check written value; monitor status register (2-octet SPI header is used)	*/
 		while(!value32){
+			clear_spi_buffers();
 			spi_tx_buf[0]=0x4f;
 			spi_tx_buf[1]=0x00;
 			stm32_spi_tr(spi_tx_buf,spi_rx_buf,spi_tr_size,0);		
 			/*	WARNING: the size of transaction should be defined exactly	*/
-			value32=spi_rx_buf[4]&0x7;
+			value32=((int)spi_rx_buf[4])&0x80;
 		}
 		sprintf(usart_tx_buf,"Frame %d is sended. System Event Status Register (reg:0f:00):\n\t{0x%x,0x%x,0x%x,0x%x,0x%x,0x%x,0x%x,0x%x}\n",
 			i,

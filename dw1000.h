@@ -31,17 +31,50 @@ typedef void (*dw_cb_t)(const dw_cb_data_t *);
  */
 typedef struct
 {
-	uint8_t chan ;           //!< channel number {1, 2, 3, 4, 5, 7 }
-	uint8_t prf ;            //!< Pulse Repetition Frequency {DWT_PRF_16M or DWT_PRF_64M}
-	uint8_t txPreambLength ; //!< DWT_PLEN_64..DWT_PLEN_4096
-	uint8_t rxPAC ;          //!< Acquisition Chunk Size (Relates to RX preamble length)
-	uint8_t txCode ;         //!< TX preamble code
-	uint8_t rxCode ;         //!< RX preamble code
-	uint8_t nsSFD ;          //!< Boolean should we use non-standard SFD for better performance
-	uint8_t dataRate ;       //!< Data Rate {DWT_BR_110K, DWT_BR_850K or DWT_BR_6M8}
-	uint8_t phrMode ;        //!< PHR mode {0x0 - standard DWT_PHRMODE_STD, 0x3 - extended frames DWT_PHRMODE_EXT}
-	uint16_t sfdTO ;         //!< SFD timeout value (in symbols)
-} dw_config_t ;
+	/*	channel number {1, 2, 3, 4, 5, 7 }	*/
+	uint8_t chan;
+	/*	Pulse Repetition Frequency {DWT_PRF_16M or DWT_PRF_64M}	*/
+	uint8_t prf;
+	/*	DWT_PLEN_64..DWT_PLEN_4096	*/
+	uint8_t txPreambLength ;
+	/*	Acquisition Chunk Size (Relates to RX preamble length)	*/
+	uint8_t rxPAC;
+	/*	TX preamble code	*/
+	uint8_t txCode;
+	/*	RX preamble code	*/
+	uint8_t rxCode;
+	/*	Boolean should we use non-standard SFD for better performance	*/
+	uint8_t nsSFD;
+	/*	Data Rate {DWT_BR_110K, DWT_BR_850K or DWT_BR_6M8}	*/
+	uint8_t dataRate;
+	/*	PHR mode {0x0 - standard DWT_PHRMODE_STD, 0x3 - extended frames DWT_PHRMODE_EXT}	*/
+	uint8_t phrMode;
+	/*	SFD timeout value (in symbols)	*/
+	uint16_t sfdTO;
+} dw_config_t;
+
+/*
+ * Structure used for the single SPI transaction.
+ */
+typedef struct
+{
+	/*	0: read, 1: write (mandatory)	*/
+	uint8_t rw;
+	/*	Register file ID (mandatory)	*/
+	uint8_t fileID;
+	/*	number of octets in transaction header (mandatory)	*/
+	uint8_t octets;
+	/*	Register sub-address (optional)	*/
+	uint16_t subAddress;
+	/*	send buffer	*/
+	uint8_t txBuf[DW1000_SPI_BUF_SIZE];
+	/*	recv buffer	*/
+	uint8_t rxBuf[DW1000_SPI_BUF_SIZE];
+	/*	the length of data to read or write	*/
+	uint8_t len;
+	/*	data are used for write transaction	*/
+	void * data;
+} dw_spi_data_t;
 	
-	
+void dw_spi_tr(dw_spi_data_t * data);
 #endif
