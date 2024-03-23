@@ -120,7 +120,7 @@ void main(void)
 	spi_tx_buf[3]=0x1;
 	spi_tx_buf[4]=0x0;
 	spi_tr_size=0x8;
-	/*	write 0x00010001 value to 0x03 register	*/
+	/*	write 0x00010203 value	*/
 	stm32_spi_tr(spi_tx_buf,spi_rx_buf,spi_tr_size,0);
 	
 	/*	check written values	*/
