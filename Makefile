@@ -1,6 +1,6 @@
 Proj_Name=dw1000
-Working_Dir=/home/kvon/W
-Proj_Super_Dir=$(Working_Dir)/Projects/robotics
+Working_Dir=/home/jack/w
+Proj_Super_Dir=$(Working_Dir)/projects/robotics
 Proj_Dir=$(Proj_Super_Dir)/$(Proj_Name)
 CMSIS_Dir=$(Working_Dir)/lib/cmsis/STM32CubeF4/Drivers/CMSIS
 CMSIS_Core_Include=$(CMSIS_Dir)/Core/Include
@@ -40,7 +40,7 @@ CFLAGS=$(COREFLAGS)
 all:$(Proj_Name)
 
 $(Proj_Name):$(Startup_FileName).o system_stm32f4xx.o main.o rcc.o uart.o gpio.o spi.o  
-	arm-none-eabi-gcc $(LDFLAGS) -o $(Proj_Name).elf -Tmem.ld $(Startup_FileName).o system_stm32f4xx.o main.o rcc.o uart.o gpio.o -lm spi.o 
+	arm-none-eabi-gcc $(LDFLAGS) -o $(Proj_Name).elf -Tmem.ld $(Startup_FileName).o system_stm32f4xx.o main.o rcc.o uart.o gpio.o spi.o -lm
 	arm-none-eabi-objcopy -O binary $(Proj_Name).elf $(Proj_Name).bin
 
 $(Startup_FileName).o:
@@ -58,7 +58,7 @@ uart.o:
 gpio.o:
 		arm-none-eabi-gcc $(COREFLAGS) -I$(CMSIS_Device_Include) -I$(CMSIS_Core_Include) -c -g -o $@ gpio.c -D$(Target)
 spi.o:
-	arm-none-eabi-gcc $(COREFLAGS) -I$(CMSIS_Device_Include) -I$(CMSIS_Core_Include) -c -g -o $@ spi.c -D$(Target)	
+		arm-none-eabi-gcc $(COREFLAGS) -I$(CMSIS_Device_Include) -I$(CMSIS_Core_Include) -c -g -o $@ spi.c -D$(Target)	
 	
 clean:
 	rm *.o *.bin *.elf
