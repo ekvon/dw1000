@@ -39,8 +39,8 @@ CFLAGS=$(COREFLAGS)
 
 all:$(Proj_Name)
 
-$(Proj_Name):$(Startup_FileName).o system_stm32f4xx.o main.o rcc.o uart.o gpio.o spi.o  
-	arm-none-eabi-gcc $(LDFLAGS) -o $(Proj_Name).elf -Tmem.ld $(Startup_FileName).o system_stm32f4xx.o main.o rcc.o uart.o gpio.o spi.o -lm
+$(Proj_Name):$(Startup_FileName).o system_stm32f4xx.o main.o rcc.o uart.o gpio.o spi.o dw1000.o 
+	arm-none-eabi-gcc $(LDFLAGS) -o $(Proj_Name).elf -Tmem.ld $(Startup_FileName).o system_stm32f4xx.o main.o rcc.o uart.o gpio.o spi.o dw1000.o -lm
 	arm-none-eabi-objcopy -O binary $(Proj_Name).elf $(Proj_Name).bin
 
 $(Startup_FileName).o:
@@ -58,7 +58,9 @@ uart.o:
 gpio.o:
 		arm-none-eabi-gcc $(COREFLAGS) -I$(CMSIS_Device_Include) -I$(CMSIS_Core_Include) -c -g -o $@ gpio.c -D$(Target)
 spi.o:
-		arm-none-eabi-gcc $(COREFLAGS) -I$(CMSIS_Device_Include) -I$(CMSIS_Core_Include) -c -g -o $@ spi.c -D$(Target)	
+		arm-none-eabi-gcc $(COREFLAGS) -I$(CMSIS_Device_Include) -I$(CMSIS_Core_Include) -c -g -o $@ spi.c -D$(Target)
+dw1000.o:
+		arm-none-eabi-gcc $(COREFLAGS) -I$(CMSIS_Device_Include) -I$(CMSIS_Core_Include) -c -g -o $@ dw1000.c -D$(Target)	
 	
 clean:
 	rm *.o *.bin *.elf

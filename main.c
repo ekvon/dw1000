@@ -46,6 +46,8 @@ void main(void)
 	uint32_t value32;
 	/*	number of transmitted frames	*/
 	int tx_number=0x100;
+	/*	structure used for SPI communication	*/
+	dw_spi_data_t spi_data;
 	
 	/*	PLLCLK settings	*/
 	stm32_pll_t stm32_pll;
@@ -104,16 +106,36 @@ void main(void)
 	DW1000_RST_High;
 	/*	read register using 1-bit transaction header	*/
 	memset(spi_tx_buf,0,DW1000_SPI_BUF_SIZE);
-	/*	rx-register will be cleared	in SPI procedure	*/
-	spi_tx_buf[0]=0x0;
-	/*	*/
-	spi_tr_size=0x8;
-	stm32_spi_tr(spi_tx_buf,spi_rx_buf,spi_tr_size,0);
-	sprintf(usart_tx_buf,"Device Identifier Register (reg:00:00):\n\t{0x%x,0x%x,0x%x,0x%x,0x%x,0x%x,0x%x,0x%x}\n",
-		spi_rx_buf[0],spi_rx_buf[1],spi_rx_buf[2],spi_rx_buf[3],spi_rx_buf[4],spi_rx_buf[5],spi_rx_buf[6],spi_rx_buf[7]);
-	stm32_usart_tx(usart_tx_buf,0);
+	/*	Device Identifier Register	*/
+	spi_data.rw=DW_SPI_READ;
+	spi_data.fileID=DW_REG_DEV_ID;
+	spi_data.octets=0x1;
+	spi_data.subAddress=0x0;
+	spi_data.len=0x4;
 	
-	/*	set value to PAN Identifier and Short Address register (0x03) and check ii value	*/
+	dw_spi_tr(&spi_data);
+	sprintf(usart_tx_buf,"Device Identifier Register (reg:00:00):\n\t{0x%x,0x%x,0x%x,0x%x,0x%x,0x%x,0x%x,0x%x}\n",
+		spi_data.rxBuf[0],
+		spi_data.rxBuf[1],
+		spi_data.rxBuf[2],
+		spi_data.rxBuf[3],
+		spi_data.rxBuf[4],
+		spi_data.rxBuf[5],
+		spi_data.rxBuf[6],
+		spi_data.rxBuf[7]);
+	stm32_usart_tx(usart_tx_buf,0);
+
+	if(DW_USE_PAN_REGISTER){
+		/*	set value to PAN Identifier and Short Address register (see dw1000.h) and check written values	*/
+		spi_data.rw=DW_SPI_WRITE;
+		spi_data.fileID=DW_REG_PANADR;
+		spi_data.octets=0x1;
+		spi_data.subAddress=0x0;
+		spi_data.len=0x4;
+		/*	data to send	*/
+		value32=(DW_PAN<<0x10)|DW_SHORT_ADDRESS;
+	}	
+	
 	spi_tx_buf[0]=0x80|0x03;
 	spi_tx_buf[1]=0x3;
 	spi_tx_buf[2]=0x2;

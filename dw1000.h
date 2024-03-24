@@ -12,6 +12,19 @@
 #define DW1000_RST_Low GPIOB->BSRR&=~GPIO_BSRR_BS1;\
 	GPIOB->BSRR|=GPIO_BSRR_BR1
 	
+#define DW_SPI_READ 0
+#define DW_SPI_WRITE 1
+
+/*	register file ID	*/
+#define DW_REG_DEV_ID 0x00
+#define DW_REG_PANADR 0x03
+
+#define DW_USE_PANADR 0
+#define DW_PAN 0x0001
+#define DW_SHORT_ADDRESS 0x0203
+
+#include <stdint.h>
+	
 /*	TX/RX call-back data (loaded from deca_device_api.h)	*/
 typedef struct
 {
@@ -76,5 +89,5 @@ typedef struct
 	void * data;
 } dw_spi_data_t;
 	
-void dw_spi_tr(dw_spi_data_t * data);
+int dw_spi_tr(dw_spi_data_t * data);
 #endif
